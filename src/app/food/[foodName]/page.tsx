@@ -7,6 +7,16 @@ import { getFoodAIInsights } from '@/lib/aiService';
 import { getNutritionFacts } from '@/lib/nutritionApi';
 import prisma from '@/lib/db';
 
+// Define the correct PageProps interface for dynamic routes
+interface FoodDetailPageProps {
+  params: {
+    foodName: string; // Your dynamic segment
+  };
+  // Next.js also passes searchParams, even if not used.
+  // It's good practice to include it in the PageProps type.
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 interface FoodAnalysisResult {
   pros: string[];
   cons: string[];
@@ -43,7 +53,7 @@ interface NutritionFacts {
 }
 
 async function saveSearchHistory(userId: string, foodName: string) {
-  const MAX_HISTORY_ENTRIES = 10; // This constant defines the limit
+  const MAX_HISTORY_ENTRIES = 10; // Define the limit
 
   try {
     // 1. Get current history count for the user
@@ -83,11 +93,10 @@ async function saveSearchHistory(userId: string, foodName: string) {
   }
 }
 
+// Use the newly defined FoodDetailPageProps interface
 export default async function FoodDetailPage({
   params,
-}: {
-  params: { foodName: string };
-}) {
+}: FoodDetailPageProps) { // Changed the type annotation here
   const { foodName } = params;
   if (!foodName) {
     notFound();
