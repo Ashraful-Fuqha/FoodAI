@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link'; // Import Next.js Link for navigation
-import Image from 'next/image'; // Import Next.js Image for optimized images
+import Link from 'next/link';
+import Image from 'next/image';
 
 // React Hook Form and Zod imports
 import { useForm } from 'react-hook-form';
@@ -27,14 +27,13 @@ type FormData = z.infer<typeof formSchema>;
 export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
-  // Initialize react-hook-form with Zod resolver
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset, // To clear the form after submission
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -44,30 +43,28 @@ export default function SignInPage() {
     setError(null);
 
     const result = await signIn('credentials', {
-      redirect: false, // Important: prevent redirect on error, handle manually
+      redirect: false,
       email: data.email,
       password: data.password,
     });
 
     if (result?.error) {
-      // Customize error messages based on NextAuth.js errors if needed
       if (result.error === 'CredentialsSignin') {
         setError('Invalid email or password. Please try again.');
       } else {
         setError(result.error);
       }
     } else if (result?.ok) {
-      // Successful login, redirect to home or a dashboard
       router.push('/');
     }
     setLoading(false);
-    reset(); // Clear the form fields
+    reset();
   };
 
   const handleSocialSignIn = async (provider: string) => {
     setLoading(true);
     setError(null);
-    await signIn(provider, { callbackUrl: '/' }); // Redirect to home on success
+    await signIn(provider, { callbackUrl: '/' });
     setLoading(false);
   };
 
@@ -82,7 +79,6 @@ export default function SignInPage() {
           </div>
         )}
 
-        {/* Use handleSubmit from react-hook-form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -90,11 +86,9 @@ export default function SignInPage() {
               id="email"
               type="email"
               placeholder="you@example.com"
-              // Register the input with react-hook-form
               {...register("email")}
               className="mt-1 dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600"
             />
-            {/* Display validation error */}
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
             )}
@@ -105,11 +99,9 @@ export default function SignInPage() {
               id="password"
               type="password"
               placeholder="********"
-              // Register the input with react-hook-form
               {...register("password")}
               className="mt-1 dark:bg-gray-700 dark:text-gray-50 dark:border-gray-600"
             />
-            {/* Display validation error */}
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
             )}
@@ -157,7 +149,7 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account? <Link href="/auth/signup" className="text-blue-600 hover:underline dark:text-blue-400">Register</Link>
+          Don&apos;t have an account? <Link href="/auth/register" className="text-blue-600 hover:underline dark:text-blue-400">Register</Link>
         </p>
       </div>
     </div>
