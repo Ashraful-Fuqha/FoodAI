@@ -1,20 +1,15 @@
 // src/app/api/history/[id]/route.ts
-import { NextResponse, NextRequest } from 'next/server'; // Import NextRequest
+import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/db';
 import { auth } from '@/auth';
 
-// The interface RouteContext is no longer explicitly used in the function signature,
-// but it's good to keep for documentation or if you need to type 'params' elsewhere.
-// interface RouteContext {
-//   params: {
-//     id: string; // The dynamic segment 'id' will be a string
-//   };
-// }
-
-// Remove the explicit type annotation for the second argument,
-// letting TypeScript infer it. This often resolves stubborn build errors.
-export async function DELETE(req: NextRequest, { params }) { // Removed explicit type for { params }
-  const { id } = params; // Access params directly from the destructured object. TypeScript will infer 'id' as string.
+// Next.js 15 compatible route handler - params is now a Promise
+export async function DELETE(
+  req: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // Await the params promise in Next.js 15
+  const { id } = await params;
 
   try {
     const session = await auth(); // Get the session from the server
