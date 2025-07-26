@@ -52,6 +52,7 @@ export default function SignInPage() {
       if (result.error === 'CredentialsSignin') {
         setError('Invalid email or password. Please try again.');
       } else {
+        console.error('Sign-in error:', result.error);
         setError(result.error);
       }
     } else if (result?.ok) {
