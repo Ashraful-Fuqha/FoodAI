@@ -7,8 +7,15 @@ import { getFoodAIInsights } from '@/lib/aiService';
 import { getNutritionFacts } from '@/lib/nutritionApi';
 import prisma from '@/lib/db';
 
-// Removed the separate FoodDetailPageProps interface.
-// We will type directly in the function signature.
+// Define a reusable PageProps type that mirrors Next.js's internal expectation
+// This often resolves stubborn build errors related to PageProps constraints.
+type AppRouterPageProps<
+  P = { [key: string]: string | string[] | undefined },
+  S = { [key: string]: string | string[] | undefined }
+> = {
+  params: P;
+  searchParams?: S;
+};
 
 interface FoodAnalysisResult {
   pros: string[];
@@ -86,14 +93,11 @@ async function saveSearchHistory(userId: string, foodName: string) {
   }
 }
 
-// Directly type the props in the function signature using a Readonly type
+// Use the custom AppRouterPageProps type for the component's arguments
 export default async function FoodDetailPage({
   params,
-  searchParams, // Include searchParams even if not used, as Next.js expects it
-}: Readonly<{
-  params: { foodName: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}>) {
+  searchParams,
+}: AppRouterPageProps<{ foodName: string }>) { // Using the new generic type
   const { foodName } = params;
   if (!foodName) {
     notFound();
