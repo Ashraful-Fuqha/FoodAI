@@ -2,39 +2,53 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid'; // For generating unique tokens
+import { v4 as uuidv4 } from 'uuid';
+import nodemailer from 'nodemailer'; // Import nodemailer
 
-// Placeholder for email sending function
-// In a real application, you would integrate with a service like Nodemailer, Resend, SendGrid, Mailgun, etc.
+// Configure Nodemailer transporter using environment variables
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT || '587'), // Parse port as integer
+  secure: process.env.EMAIL_SECURE === 'true', // Use boolean for secure
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 async function sendVerificationEmail(email: string, token: string) {
   const verificationLink = `${process.env.AUTH_URL}/api/auth/verify-email?token=${token}`;
-  console.log(`
-    ========================================================
-    EMAIL VERIFICATION LINK FOR ${email}:
-    ${verificationLink}
-    ========================================================
-    (In a real app, this email would be sent via a service)
-  `);
-  // Example with a real email service (conceptual, requires setup):
-  /*
-  const nodemailer = require('nodemailer');
-  let transporter = nodemailer.createTransport({
-    host: "smtp.your-email-service.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER, // your email service user
-      pass: process.env.EMAIL_PASS, // your email service password
-    },
-  });
 
-  await transporter.sendMail({
-    from: '"FoodAI" <no-reply@foodai.com>', // sender address
-    to: email, // list of receivers
-    subject: "Verify your FoodAI account", // Subject line
-    html: `<p>Please click this link to verify your email: <a href="${verificationLink}">${verificationLink}</a></p>`, // html body
-  });
-  */
+  try {
+    await transporter.sendMail({
+      from: `"FoodAI" <${process.env.EMAIL_USER}>`, // Sender address (use your configured email user)
+      to: email, // List of receivers
+      subject: "Verify your FoodAI account", // Subject line
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #0056b3;">Welcome to FoodAI!</h2>
+          <p>Thank you for registering. To activate your account, please verify your email address by clicking the link below:</p>
+          <p style="margin: 20px 0;">
+            <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">
+              Verify Your Email
+            </a>
+          </p>
+          <p>If the button above doesn't work, you can copy and paste the following link into your browser:</p>
+          <p><a href="${verificationLink}" style="color: #007bff; text-decoration: underline;">${verificationLink}</a></p>
+          <p>This link will expire in a short period for security reasons.</p>
+          <p>If you did not register for a FoodAI account, please ignore this email.</p>
+          <p>Best regards,<br>The FoodAI Team</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="font-size: 0.8em; color: #777;">This is an automated email, please do not reply.</p>
+        </div>
+      `, // HTML body with a styled link
+    });
+    console.log(`Verification email sent to ${email}`);
+  } catch (error) {
+    console.error(`Failed to send verification email to ${email}:`, error);
+    // In a production app, you might want to log this error to a monitoring service
+    // or notify an admin, but the registration process can still complete.
+  }
 }
 
 export async function POST(req: Request) {
@@ -50,9 +64,7 @@ export async function POST(req: Request) {
     });
 
     if (existingUser) {
-      // If user exists but is not verified, you might want to resend email or prompt them
       if (!existingUser.emailVerified) {
-        // Option: Resend verification email if not verified
         const newVerificationToken = uuidv4();
         await prisma.user.update({
           where: { id: existingUser.id },
@@ -65,15 +77,15 @@ export async function POST(req: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = uuidv4(); // Generate unique token
+    const verificationToken = uuidv4();
 
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        verificationToken: verificationToken, // Save the token
-        emailVerified: null, // Initially null, will be set on verification
+        verificationToken: verificationToken,
+        emailVerified: null,
       },
       select: {
         id: true,

@@ -149,7 +149,7 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Don&apos;t have an account? <Link href="/auth/register" className="text-blue-600 hover:underline dark:text-blue-400">Register</Link>
+          Don&apos;t have an account? <Link href="/auth/signup" className="text-blue-600 hover:underline dark:text-blue-400">Register</Link>
         </p>
       </div>
     </div>
