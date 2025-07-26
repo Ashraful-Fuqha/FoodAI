@@ -7,15 +7,8 @@ import { getFoodAIInsights } from '@/lib/aiService';
 import { getNutritionFacts } from '@/lib/nutritionApi';
 import prisma from '@/lib/db';
 
-// Define the correct PageProps interface for dynamic routes
-interface FoodDetailPageProps {
-  params: {
-    foodName: string; // Your dynamic segment
-  };
-  // Next.js also passes searchParams, even if not used.
-  // It's good practice to include it in the PageProps type.
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
+// Removed the separate FoodDetailPageProps interface.
+// We will type directly in the function signature.
 
 interface FoodAnalysisResult {
   pros: string[];
@@ -93,10 +86,14 @@ async function saveSearchHistory(userId: string, foodName: string) {
   }
 }
 
-// Use the newly defined FoodDetailPageProps interface
+// Directly type the props in the function signature using a Readonly type
 export default async function FoodDetailPage({
   params,
-}: FoodDetailPageProps) { // Changed the type annotation here
+  searchParams, // Include searchParams even if not used, as Next.js expects it
+}: Readonly<{
+  params: { foodName: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}>) {
   const { foodName } = params;
   if (!foodName) {
     notFound();
