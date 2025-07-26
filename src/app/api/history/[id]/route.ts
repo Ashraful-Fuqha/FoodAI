@@ -1,17 +1,24 @@
 // src/app/api/history/[id]/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server'; // Import NextRequest
 import prisma from '@/lib/db';
-import { auth } from '@/auth'; // Import auth to get the session on the server
+import { auth } from '@/auth';
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+// Define the type for the context object passed to route handlers
+interface RouteContext {
+  params: {
+    id: string; // The dynamic segment 'id' will be a string
+  };
+}
+
+export async function DELETE(req: NextRequest, context: RouteContext) {
+  const { id } = context.params; // Access params from the context object
+
   try {
     const session = await auth(); // Get the session from the server
 
     if (!session || !session.user || !session.user.id) {
       return NextResponse.json({ message: 'Unauthorized.' }, { status: 401 });
     }
-
-    const { id } = params; // Get the ID from the dynamic route parameter
 
     if (!id) {
       return NextResponse.json({ message: 'History entry ID is required.' }, { status: 400 });
