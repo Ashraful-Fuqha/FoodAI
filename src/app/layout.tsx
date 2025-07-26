@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`} // Added flex-col and min-h-screen for sticky footer
       >
         <AuthProvider>
           <ThemeProvider
@@ -41,9 +41,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar/>
-            <main className="flex-grow container mx-auto p-4">{children}</main> {/* flex-grow to push footer down */}
-            <footer className="bg-gray-200 text-center p-4 mt-auto dark:bg-gray-900 dark:text-gray-400 transition-colors duration-300">
-              <p className="text-gray-600 dark:text-gray-400">&copy; {new Date().getFullYear()} FoodAI. All rights reserved.</p>
+            <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8"> {/* Responsive padding */}
+              {children}
+            </main>
+            <footer className="bg-gray-200 text-center p-4 dark:bg-gray-900 dark:text-gray-400 transition-colors duration-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">&copy; {new Date().getFullYear()} FoodAI. All rights reserved.</p> {/* Responsive text size */}
             </footer>
           </ThemeProvider>
         </AuthProvider>

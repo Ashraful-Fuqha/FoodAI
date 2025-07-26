@@ -1,4 +1,3 @@
-// src/app/page.tsx
 'use client'; // This will be a Client Component for search input
 
 import { useState, FormEvent } from 'react';
@@ -23,25 +22,25 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)] px-4 py-12 bg-background text-foreground transition-colors duration-300">
-      <h2 className="text-5xl font-extrabold text-gray-900 mb-8 text-center leading-tight dark:text-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-150px)] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16 bg-background text-foreground transition-colors duration-300">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 sm:mb-8 text-center leading-tight dark:text-gray-50">
         Discover the Story Behind Your Food
       </h2>
-      <p className="text-xl text-gray-600 mb-10 text-center max-w-2xl dark:text-gray-300">
+      <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-10 text-center max-w-xl sm:max-w-2xl dark:text-gray-300">
         Get comprehensive nutritional facts and AI-powered insights on pros, cons, organ impact, and more for any food.
       </p>
-      <form onSubmit={handleSearch} className="w-full max-w-xl flex shadow-lg rounded-full overflow-hidden dark:shadow-xl">
+      <form onSubmit={handleSearch} className="w-full max-w-md sm:max-w-xl flex shadow-lg rounded-full overflow-hidden dark:shadow-xl">
         <Input
           type="text"
           value={foodQuery}
           onChange={(e) => setFoodQuery(e.target.value)}
           placeholder="e.g., Apple, Spinach, Salmon"
-          className="flex-grow p-4 text-lg rounded-l-full focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500 focus-visible:outline-none bg-white dark:bg-gray-700 dark:text-gray-50 dark:placeholder-gray-400 transition-colors duration-300"
+          className="flex-grow p-3 sm:p-4 text-base sm:text-lg rounded-l-full focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-blue-500 focus-visible:outline-none bg-white dark:bg-gray-700 dark:text-gray-50 dark:placeholder-gray-400 transition-colors duration-300"
           disabled={loading} // Disable input while loading
         />
         <Button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-r-full transition duration-300 ease-in-out dark:bg-blue-800 dark:hover:bg-blue-700 dark:text-gray-50"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-r-full transition duration-300 ease-in-out dark:bg-blue-800 dark:hover:bg-blue-700 dark:text-gray-50"
           disabled={loading} // Disable button while loading
         >
           {loading ? (
