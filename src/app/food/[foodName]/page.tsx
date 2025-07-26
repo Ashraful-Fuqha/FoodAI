@@ -7,16 +7,6 @@ import { getFoodAIInsights } from '@/lib/aiService';
 import { getNutritionFacts } from '@/lib/nutritionApi';
 import prisma from '@/lib/db';
 
-// Define a reusable PageProps type that mirrors Next.js's internal expectation
-// This often resolves stubborn build errors related to PageProps constraints.
-type AppRouterPageProps<
-  P = { [key: string]: string | string[] | undefined },
-  S = { [key: string]: string | string[] | undefined }
-> = {
-  params: P;
-  searchParams?: S;
-};
-
 interface FoodAnalysisResult {
   pros: string[];
   cons: string[];
@@ -93,15 +83,22 @@ async function saveSearchHistory(userId: string, foodName: string) {
   }
 }
 
-// Use the custom AppRouterPageProps type for the component's arguments
+// Next.js 15 compatible page props - params is now a Promise
+interface PageProps {
+  params: Promise<{ foodName: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 export default async function FoodDetailPage({
   params,
-  searchParams,
-}: AppRouterPageProps<{ foodName: string }>) { // Using the new generic type
-  const { foodName } = params;
+}: PageProps) {
+  // Await the params promise in Next.js 15
+  const { foodName } = await params;
+  
   if (!foodName) {
     notFound();
   }
+  
   const decodedFoodName = decodeURIComponent(foodName);
   const session = await auth();
 
