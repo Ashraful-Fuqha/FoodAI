@@ -36,7 +36,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <p className="text-sm font-semibold md:text-base md:hidden">Welcome, Ganesh Shara!</p>
+      <p className="text-sm font-semibold md:text-base md:hidden">Welcome, {session?.user.name || session?.user.email}!</p>
 
       {/* Hamburger Menu Button - Visible on small screens, hidden on medium and larger */}
       <Button
