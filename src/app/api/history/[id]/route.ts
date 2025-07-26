@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from 'next/server'; // Import NextRequest
 import prisma from '@/lib/db';
 import { auth } from '@/auth';
 
-// We will no longer explicitly use this interface in the function signature,
+// The interface RouteContext is no longer explicitly used in the function signature,
 // but it's good to keep for documentation or if you need to type 'params' elsewhere.
 // interface RouteContext {
 //   params: {
@@ -11,10 +11,10 @@ import { auth } from '@/auth';
 //   };
 // }
 
-// Change the function signature to directly accept 'params' in the second argument's object
-// and let TypeScript infer its type from the context.
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params; // Access params directly from the destructured object
+// Remove the explicit type annotation for the second argument,
+// letting TypeScript infer it. This often resolves stubborn build errors.
+export async function DELETE(req: NextRequest, { params }) { // Removed explicit type for { params }
+  const { id } = params; // Access params directly from the destructured object. TypeScript will infer 'id' as string.
 
   try {
     const session = await auth(); // Get the session from the server
